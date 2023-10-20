@@ -1,0 +1,131 @@
+/**
+ *    author:  longvu
+ *    created: 10/20/23 15:04:07
+**/
+#include<bits/stdc++.h>
+
+using namespace std;
+
+#define int long long
+#define sz(x) ((int)x.size())
+#define all(x) (x).begin(), (x).end()
+const int INF = numeric_limits<int>::max();
+const int nax = (int)(201001);
+const int mod = 1e9 + 7;
+
+template<class X, class Y>
+bool maximize(X& x, const Y y) {
+    if (y > x) {x = y; return true;}
+    return false;
+}
+template<class X, class Y>
+bool minimize(X& x, const Y y) {
+    if (y < x) {x = y; return true;}
+    return false;
+}
+
+struct Point {
+    int x, y, idx;
+    Point() {}
+    Point(int _x, int _y) {
+        x = _x;
+        y = _y;
+    }
+
+    bool operator < (const Point &z) const {
+        if (y == z.y) {
+            return x < z.x;
+        }
+        return y < z.y;
+    }
+
+    bool operator == (const Point &z) const {
+        return (x == z.x && y == z.y);
+    }
+};
+
+using Vtor = Point;
+
+Vtor make_vtor(Point a, Point b) {
+    Vtor res;
+    res.x = b.x - a.x;
+    res.y = b.y - a.y;
+    return res;
+}
+
+int operator * (Vtor a, Vtor b) {
+    return a.x * b.y - a.y * b.x;
+}
+
+int sqr_distant(Point a, Point b) {
+    return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
+}
+
+int cross(Point a, Point b, Point c) {
+    return make_vtor(a, b) * make_vtor(b, c);
+}
+
+Point p[nax], q[nax], t1[nax], t2[nax], t[nax];
+int ans[nax];
+int32_t main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        cin >> p[i].x >> p[i].y;
+        p[i].idx = i;
+    }
+    swap(p[1], *min_element(p + 1, p + n + 1, [&](Point a, Point b) {
+        if (a.y == b.y) {
+            return a.x < b.x;
+        }
+        return a.y < b.y;
+    }));
+    sort(p + 2, p + n + 1, [&](Point a, Point b) {
+        if (!(make_vtor(p[1], a) * make_vtor(p[1], b))) {
+            return sqr_distant(p[1], a) < sqr_distant(p[1], b);
+        }
+        return (make_vtor(p[1], a) * make_vtor(p[1], b) > 0);
+    });
+    int m1 = 0;
+    for (int i = 1; i <= n; ++i) {
+        while (m1 >= 2
+                && cross(t1[m1 - 1], t1[m1], p[i]) > 0) {
+            m1--;
+        }
+        t1[++m1] = p[i];
+    }
+    int m2 = 0;
+    for (int i = n; i >= 1; --i) {
+        while (m2 >= 2
+                && cross(t2[m2 - 1], t2[m2], p[i]) > 0) {
+            m2--;
+        }
+        t2[++m2] = p[i];
+        ans[m2] = p[i].idx;
+    }
+    for (int i = 2; i <= m2; ++i) {
+        if (t1[1] == t2[i]) {
+            break;
+        }
+        t1[++m1] = t2[i];
+    }
+    set<Point> s;
+    int m = 0;
+    for (int i = 1; i <= m1; ++i) {
+        if (s.find(t1[i]) != s.end()) {
+            continue;
+        }
+        t[++m] = t1[i];
+        ans[m] = t[m].idx;
+        s.insert(t1[i]);
+    }
+    sort(ans + 1, ans + m + 1);
+    // cout << m1 << '\n';
+    for (int i = 1; i <= m; ++i) {
+        cout << ans[i] << " ";
+    }
+    cout << '\n';
+    return 0;
+}
