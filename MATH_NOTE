@@ -1,0 +1,9 @@
+S = B / 2 + I - 1
+
+number of tree n ^ (n - 2)
+
+Lagrange Interpolation
+
+if deg is k and know k + 1 value
+
+f(x) = sum (i = 1, i <= k + 1) {f(x[i]) * mul (j = 1, j <= k + 1, j != i) {(x - x[j]) / (x[i] - x[j]}}
