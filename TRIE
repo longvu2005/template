@@ -1,0 +1,31 @@
+struct Trie
+{
+    unordered_map<char, Trie*> map;
+    int is_leaf;
+};
+
+Trie* make_new_node()
+{
+    Trie* new_node = new Trie;
+    new_node -> is_leaf = 0;
+
+    return new_node;
+}
+
+void insert(Trie* &root, string s)
+{
+    if (root == nullptr)
+        root = make_new_node();
+
+    Trie* tmp = root;
+    for (int i = 0; i < (int)s.size(); ++i) {
+        if (tmp -> map.find(s[i]) == tmp -> map.end())
+        {
+            tmp -> map[s[i]] = make_new_node();
+        }
+
+        tmp = tmp -> map[s[i]];
+    }
+
+    tmp -> is_leaf = 1;
+}
