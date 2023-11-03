@@ -1,0 +1,72 @@
+struct Line {
+    int a, b;
+
+    Line(int _a, int _b) {
+        a = _a;
+        b = _b;
+    }
+
+    int cal(int x) {
+        return a * x + b;
+    }
+
+    bool operator < (const Line& z) const {
+        if (a == z.a) {
+            return b < z.b;
+        }
+        return a < z.a;
+    }
+};
+
+ld find_ins(Line a, Line b) {
+    ld z = (b.b - a.b), t = (a.a - b.a);
+    if (a.a == b.a) {
+        return (b.b < a.b ? INF : - INF);
+    }
+    return z / t;
+}
+
+struct Convex_hull {
+    vector<Line> a;
+
+    void reseter() {
+        a.clear();
+        dq.clear();
+        a.push_back({ -1, -1});
+    }
+
+    void insert(Line z) {
+        a.push_back(z);
+    }
+
+    vector<Line> dq;
+    void precal() {
+        for (int i = 1; i < sz(a); ++i) {
+            while (sz(dq) >= 2 && find_ins(dq.back(), a[i]) < find_ins(dq[sz(dq) - 2], dq.back())) {
+                dq.pop_back();
+            }
+            dq.push_back(a[i]);
+        }
+    }
+
+    int get(int x) {
+        if (dq.empty()) {
+            return 0;
+        }
+        int res = dq[0].cal(x);
+        int l = 1, r = sz(dq) - 1;
+        while (l <= r) {
+            int mid = (l + r) >> 1, z = dq[mid - 1].cal(x), t = dq[mid].cal(x);
+            maximize(res, z);
+            maximize(res, t);
+            if (z <= t) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        l--;
+        maximize(res, dq[l].cal(x));
+        return res;
+    }
+};
