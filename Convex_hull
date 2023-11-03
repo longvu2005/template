@@ -1,29 +1,3 @@
-/**
- *    author:  longvu
- *    created: 10/20/23 15:04:07
-**/
-#include<bits/stdc++.h>
-
-using namespace std;
-
-#define int long long
-#define sz(x) ((int)x.size())
-#define all(x) (x).begin(), (x).end()
-const int INF = numeric_limits<int>::max();
-const int nax = (int)(201001);
-const int mod = 1e9 + 7;
-
-template<class X, class Y>
-bool maximize(X& x, const Y y) {
-    if (y > x) {x = y; return true;}
-    return false;
-}
-template<class X, class Y>
-bool minimize(X& x, const Y y) {
-    if (y < x) {x = y; return true;}
-    return false;
-}
-
 struct Point {
     int x, y, idx;
     Point() {}
@@ -65,17 +39,8 @@ int cross(Point a, Point b, Point c) {
     return make_vtor(a, b) * make_vtor(b, c);
 }
 
-Point p[nax], q[nax], t1[nax], t2[nax], t[nax];
-int ans[nax];
-int32_t main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> p[i].x >> p[i].y;
-        p[i].idx = i;
-    }
+Point t1[nax], t2[nax], t[nax];
+vector<Point> convex_hull_poly(Point p[], int n) {
     swap(p[1], *min_element(p + 1, p + n + 1, [&](Point a, Point b) {
         if (a.y == b.y) {
             return a.x < b.x;
@@ -88,6 +53,7 @@ int32_t main() {
         }
         return (make_vtor(p[1], a) * make_vtor(p[1], b) > 0);
     });
+    vector<Point> res = {Point(-1, -1)};
     int m1 = 0;
     for (int i = 1; i <= n; ++i) {
         while (m1 >= 2
@@ -103,7 +69,6 @@ int32_t main() {
             m2--;
         }
         t2[++m2] = p[i];
-        ans[m2] = p[i].idx;
     }
     for (int i = 2; i <= m2; ++i) {
         if (t1[1] == t2[i]) {
@@ -118,14 +83,10 @@ int32_t main() {
             continue;
         }
         t[++m] = t1[i];
-        ans[m] = t[m].idx;
         s.insert(t1[i]);
     }
-    sort(ans + 1, ans + m + 1);
-    // cout << m1 << '\n';
-    for (int i = 1; i <= m; ++i) {
-        cout << ans[i] << " ";
+    for (int i = 1; i <= m1; ++i) {
+        res.push_back(t1[i]);
     }
-    cout << '\n';
-    return 0;
+    return res;
 }
