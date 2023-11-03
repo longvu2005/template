@@ -1,0 +1,38 @@
+struct Tarjan {
+    int time = 0, bright[nax][nax] = {0}, cut_node[nax] = {0}, num[nax] = {0}, low[nax] = {0};
+    void solve(int n, int root) {
+        for (int i = 1;i <= n; ++i) {
+            if (!num[i]) {
+                dfs(root, root);
+            }
+        }
+    }
+    void dfs(int u, int pa) {
+        num[u] = low[u] = ++time;
+        int cnt = 0;
+        for (auto v : adj[u]) {
+            if (pa == v) {
+                continue;
+            }
+            if (num[v]) {
+                low[u] = min(low[u], num[v]);
+            } else {
+                dfs(v, u);
+                low[u] = min(low[u], low[v]);
+                cnt++;
+                if (low[v] >= num[v]) {
+                    bright[u][v] = bright[v][u] = 1;
+                }
+                if (pa == u) {
+                    if (cnt >= 2) {
+                        cut_node[u] = 1;
+                    }
+                } else {
+                    if (low[v] >= num[u]) {
+                        cut_node[u] = 1;
+                    }
+                }
+            }
+        }
+    }
+};
