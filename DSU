@@ -1,6 +1,6 @@
 struct DSU
 {
-    std::vector<int> pa, rank;
+    int pa[nax];
 
     DSU(int n)
     {
