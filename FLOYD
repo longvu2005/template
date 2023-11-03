@@ -1,0 +1,43 @@
+struct Floyd {
+    int n, sh_path[nax][nax], next[nax][nax];
+    Floyd(int n) : n(n) {
+        memset(next, -1, sizeof next);
+        memset(sh_path, 0x3f, sizeof sh_path);
+        for (int i = 1; i <= n; ++i) {
+            sh_path[i][i] = 0;
+        }
+    }
+
+    void add_edge(int u, int v, int val) {
+        sh_path[u][v] = val;
+        next[u][v] = v;
+    }
+
+    void solve() {
+        for (int e = 1; e <= n; ++e) {
+            for (int i = 1; i <= n; ++i) {
+                for (int j = 1; j  <= n; ++j) {
+                    if (sh_path[i][e] == INF || sh_path[e][j] == INF) {
+                        continue;
+                    }
+                    if (sh_path[i][e] + sh_path[e][j] < sh_path[i][j]) {
+                        sh_path[i][j] = sh_path[i][e] + sh_path[e][j];
+                        next[i][j] = next[i][e];
+                    }
+                }
+            }
+        }
+    }
+
+    vector<int> find_path(int u, int v) {
+        vector<int> path = {u};
+        if (next[u][v] == -1) {
+            return {};
+        }
+        while (u != v) {
+            u = next[u][v];
+            path.push_back(u);
+        }
+        return path;
+    }
+};
