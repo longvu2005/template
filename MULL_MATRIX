@@ -1,0 +1,31 @@
+struct Matrix {
+    int c[nax][nax];
+    Matrix() {
+        memset(c, 0, sizeof c);
+    }
+};
+
+Matrix operator* (Matrix a, Matrix b) {
+    Matrix res;
+    for (int i = 0; i < nax; ++i) {
+        for (int j = 0; j < nax; ++j) {
+            res.c[i][j] = 0;
+            for (int k = 0; k < nax; ++k) {
+                res.c[i][j] = (res.c[i][j] + a.c[i][k] * b.c[k][j] % mod) % mod;
+            }
+        }
+    }
+    return res;
+}
+
+Matrix operator^ (Matrix a, int b) {
+    if (b == 1) {
+        return a;
+    }
+    Matrix tmp = a ^ (b / 2);
+    if (!(b % 2)) {
+        return tmp * tmp;
+    }
+    else
+        return tmp * tmp * a;
+}
