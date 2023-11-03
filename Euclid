@@ -1,0 +1,7 @@
+pair<pair<int, int>, int> ext_Euclid(int a, int b) {
+    if (!b) {
+        return {{1, 0}, a};
+    }
+    pair<pair<int, int>, int> tmp =  ext_Euclid(b, a % b);
+    return {{tmp.first.second, tmp.first.first - tmp.first.second * (a / b)}, tmp.second};
+}
