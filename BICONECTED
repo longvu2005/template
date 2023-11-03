@@ -1,0 +1,50 @@
+vector<int> adj[nax];
+int t = 0, num[nax], low[nax], ncomp = 0;
+vector<int> memo[nax], st;
+void dfs(int u, int pa, int is_root) {
+    num[u] = low[u] = ++t;
+    if (adj[u].empty()) {
+        ncomp++;
+        memo[ncomp].push_back(u);
+        return;
+    }
+    st.push_back(u);
+    int d = 0;
+    for (auto v : adj[u]) {
+        if (v == pa) {
+            continue;
+        }
+        if (!num[v]) {
+            d++;
+            dfs(v, u, 0);
+            minimize(low[u], low[v]);
+            if ((is_root && d) || low[v] >= num[u]) {
+                ncomp++;
+                memo[ncomp].push_back(u);
+                while (!st.empty()) {
+                    memo[ncomp].push_back(st.back());
+                    if (st.back() == v) {
+                        st.pop_back();
+                        break;
+                    }
+                    st.pop_back();
+                }
+            }
+        } else {
+            minimize(low[u], num[v]);
+        }
+    }
+}
+
+void find_biconect(int n) {
+    for (int i = 1; i <= n; ++i) {
+        low[i] = 0;
+        memo[i].clear();
+    }
+    st.clear();
+    for (int i = 1; i <= n; ++i) {
+        if (!num[i]) {
+            dfs(i, -1, 1);
+        }
+    }
+}
