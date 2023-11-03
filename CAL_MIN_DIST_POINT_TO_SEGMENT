@@ -1,0 +1,67 @@
+const ld Exp = (ld)(1e-12);
+const ld pi = acos(-1);
+
+struct Point {
+    ld x, y;
+};
+
+struct Segment {
+    Point a, b;
+};
+
+const ld delta = (ld)(0.00000005);
+
+ld sqr(ld z) {
+    return z * z;
+}
+
+ld cal_dist(Point a, Point b) {
+    return sqrt(sqr(b.x - a.x) + sqr(b.y - a.y));
+}
+
+Segment memo[nax];
+ld cal_min_dist_point_to_segment(Point z, Segment g) {
+    ld res = INF;
+    Point u = g.a, v = g.b;
+    minimize(res, min(cal_dist(z, u), cal_dist(z, v)));
+    if (abs(u.x - v.x) < Exp) {
+        Point vec = {v.x - u.x, v.y - u.y};
+        tuple<ld, ld, ld> lnp = {vec.x, vec.y, vec.x * z.x + vec.y * z.y};
+        swap(vec.x, vec.y);
+        vec.x *= -1;
+        tuple<ld, ld, ld> ln = {vec.x, vec.y, vec.x * u.x + vec.y * u.y};
+        Point g = {0, (get<2>(ln) * get<0>(lnp) - get<0>(ln) * get<2>(lnp)) / (get<0>(lnp) * get<1>(ln) - get<0>(ln) * get<1>(lnp))};
+        // cout << setprecision(4) << xxed << get<0>(ln) << " " << get<1>(ln) << " " << get<2>(ln) << '\n';
+        // cout << setprecision(4) << xxed << get<0>(lnp) << " " << get<1>(lnp) << " " << get<2>(lnp) << '\n';
+        g.x = (get<2>(ln) - get<1>(ln) * g.x) / get<0>(ln);
+        // cout << u.x << " " << u.y <<  " " << v.x << " " << v.y << '\n';
+        Point t = g;
+        maximize(t.x, min(u.x, v.x));
+        minimize(t.x, max(u.x, v.x));
+        maximize(t.y, min(u.y, v.y));
+        minimize(t.y, max(u.y, v.y));
+        if (abs(t.x - g.x) < Exp && abs(t.y - g.y) < Exp) {
+            minimize(res, cal_dist(z, g));
+        }
+    } else {
+        Point vec = {v.x - u.x, v.y - u.y};
+        tuple<ld, ld, ld> lnp = {vec.x, vec.y, vec.x * z.x + vec.y * z.y};
+        swap(vec.x, vec.y);
+        vec.x *= -1;
+        tuple<ld, ld, ld> ln = {vec.x, vec.y, vec.x * u.x + vec.y * u.y};
+        Point g = {(get<2>(ln) * get<1>(lnp) - get<1>(ln) * get<2>(lnp)) / (get<1>(lnp) * get<0>(ln) - get<1>(ln) * get<0>(lnp)), 0};
+        // cout << setprecision(4) << xxed << get<0>(ln) << " " << get<1>(ln) << " " << get<2>(ln) << '\n';
+        // cout << setprecision(4) << xxed << get<0>(lnp) << " " << get<1>(lnp) << " " << get<2>(lnp) << '\n';
+        g.y = (get<2>(ln) - get<0>(ln) * g.x) / get<1>(ln);
+        // cout << u.x << " " << u.y <<  " " << v.x << " " << v.y << '\n';
+        Point t = g;
+        maximize(t.x, min(u.x, v.x));
+        minimize(t.x, max(u.x, v.x));
+        maximize(t.y, min(u.y, v.y));
+        minimize(t.y, max(u.y, v.y));
+        if (abs(t.x - g.x) < Exp && abs(t.y - g.y) < Exp) {
+            minimize(res, cal_dist(z, g));
+        }
+    }
+    return res;
+}
