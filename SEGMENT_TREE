@@ -1,0 +1,79 @@
+#define NL 2 * si
+#define NR 2 * si + 1
+
+struct Node {
+    int val = INF, d = 0, lazy = 0;
+};
+
+struct Segment_tree {
+    Node seg[4 * nax];
+    void build(int si, int sl, int sr, int a[]) {
+        if (sl == sr) {
+            seg[si].val = 0;
+            seg[si].d = a[sl];
+            return;
+        }
+        int mid = (sl + sr) >> 1;
+        build(NL, sl, mid, a);
+        build(NR, mid + 1, sr, a);
+        seg[si].val = seg[NL].val;
+        seg[si].d = seg[NL].d;
+        if (seg[NR].val < seg[si].val) {
+            seg[si].val = seg[NR].val;
+            seg[si].d = seg[NR].d;
+        } else if (seg[NR].val == seg[si].val) {
+            seg[si].d += seg[NR].d;
+        }
+    }
+
+    void push_down(int si) {
+        int tmp = seg[si].lazy;
+        seg[NL].val += tmp;
+        seg[NL].lazy += tmp;
+        seg[NR].val += tmp;
+        seg[NR].lazy += tmp;
+        seg[si].lazy = 0;
+    }
+
+    void update(int si, int sl, int sr, int l, int r, int val) {
+        if (sl > sr || sl > r || sr < l) {
+            return;
+        }
+        if (sl >= l && sr <= r) {
+            seg[si].val += val;
+            seg[si].lazy += val;
+            return;
+        }
+        push_down(si);
+        int mid = (sl + sr) >> 1;
+        update(NL, sl, mid, l, r, val);
+        update(NR, mid + 1, sr, l, r, val);
+        seg[si].val = seg[NL].val;
+        seg[si].d = seg[NL].d;
+        if (seg[NR].val < seg[si].val) {
+            seg[si].val = seg[NR].val;
+            seg[si].d = seg[NR].d;
+        } else if (seg[NR].val == seg[si].val) {
+            seg[si].d += seg[NR].d;
+        }
+    }
+
+    Node get(int si, int sl, int sr, int l, int r) {
+        if (sl > sr || sl > r || sr < l) {
+            return Node();
+        }
+        if (sl >= l && sr <= r) {
+            return seg[si];
+        }
+        push_down(si);
+        int mid = (sl + sr) >> 1;
+        Node L = get(NL, sl, mid, l, r), R = get(NR, mid + 1, sr, l, r), res = L;
+        if (R.val < res.val) {
+            res.val = R.val;
+            res.d = R.d;
+        } else if (R.val == res.val) {
+            res.d += R.d;
+        }
+        return res;
+    }
+};
