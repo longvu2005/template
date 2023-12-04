@@ -1,0 +1,42 @@
+
+#define Fi first
+#define Se second
+
+const int LOG = 18;
+
+pair<int, int> rmq[naxn][LOG + 1];
+int euler[naxn], h[naxn], Log2[naxn], fir[naxn];
+vector<pair<int, int>> adj[naxn];
+int m = 0;
+void dfs(int u, int pa) {
+    euler[++m] = u;
+    fir[u] = m;
+    rmq[m][0] = {h[euler[m]], euler[m]};
+    for (auto v : adj[u]) {
+        if (v.Fi == pa) {
+            continue;
+        }
+        h[v.Fi] = 1 + h[u];
+        dfs(v.Fi, u);
+        euler[++m] = u;
+        rmq[m][0] = {h[euler[m]], euler[m]};
+    }
+}
+
+void precal() {
+    for (int i = 2; i < nax; ++i) {
+        Log2[i] = 1 + Log2[i >> 1]; 
+    }
+    dfs(1, -1);
+    for (int k = 1; k <= LOG; ++k) {
+        for (int i = 1; i + (1 << k) - 1 <= m; ++i) {
+            rmq[i][k] = min(rmq[i][k - 1], rmq[i + (1 << (k - 1))][k - 1]);
+        }
+    }
+}
+
+int find_lca(int u, int v) {
+    int l = min(fir[u], fir[v]), r = max(fir[u], fir[v])
+        , k = Log2[r - l + 1];
+    return min(rmq[l][k], rmq[r - (1 << k) + 1][k]).Se;
+}
