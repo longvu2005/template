@@ -1,0 +1,30 @@
+int expo(int a, int b) {
+    if (!b) {
+        return 1;
+    }
+    int tmp = expo(a, b >> 1);
+    if (b & 1) {
+        return tmp * tmp % mod * (a % mod) % mod;
+    }
+    return tmp * tmp % mod;
+}
+
+int facal[nax], inv[nax];
+void precal() {
+    facal[0] = 1;
+    inv[0] = expo(facal[0], mod - 2);
+    for (int i = 1; i < nax; ++i) {
+        facal[i] = (i * facal[i - 1]) % mod;
+        inv[i] = expo(facal[i], mod - 2);
+    }
+}
+
+int lucas(int n, int r) {
+    if (r > n) {
+        return 0;
+    }
+    if (n >= mod || r >= mod) {
+        return lucas(n / mod, r / mod) * lucas(n % mod, r % mod) % mod;
+    }
+    return facal[n] * inv[r] % mod * inv[n - r] % mod;
+}
