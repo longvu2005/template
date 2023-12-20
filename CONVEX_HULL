@@ -41,6 +41,7 @@ struct Convex_hull {
 
     vector<Line> dq;
     void precal() {
+        sort(1 + all(a));
         for (int i = 1; i < sz(a); ++i) {
             while (sz(dq) >= 2 && find_ins(dq.back(), a[i]) < find_ins(dq[sz(dq) - 2], dq.back())) {
                 dq.pop_back();
