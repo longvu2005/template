@@ -12,7 +12,7 @@ struct DSU {
 
     void join(int u, int v) {
         u = find(u), v = find(v);
-        if v < u) {
+        if (v < u) {
             swap(u, v);
         }
         par[v] = u;
