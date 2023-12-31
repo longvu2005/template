@@ -1,0 +1,36 @@
+vector<int> adj[naxpp];
+map<int, int> c[naxpp], f[naxpp];
+int tr[naxpp];
+bool bfs(int s, int t) {
+    memset(tr, 0, sizeof tr);
+    deque<int> dq = {s};
+    while (!dq.empty()) {
+        int u = dq.front();
+        dq.pop_front();
+        for (auto v : adj[u]) {
+            if (!tr[v] && c[u][v] - f[u][v] > 0) {
+                tr[v] = u;
+                if (v == t) {
+                    return true;
+                }
+                dq.push_back(v);
+            }
+        }
+    }
+    return false;
+}
+
+int enflow(int s, int t) {
+    int mn = INF, v = t;
+    while (v != s) {
+        minimize(mn, c[tr[v]][v] - f[tr[v]][v]);
+        v = tr[v];
+    }
+    v = t;
+    while (v != s) {
+        f[tr[v]][v] += mn;
+        f[v][tr[v]] -= mn;
+        v = tr[v];
+    }
+    return mn;
+}
