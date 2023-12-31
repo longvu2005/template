@@ -63,7 +63,7 @@ struct Dinic {
         return 0;
     }
 
-    long long flow() {
+    long long run() {
         long long f = 0;
         while (true) {
             fill(level.begin(), level.end(), -1);
