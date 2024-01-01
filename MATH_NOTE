@@ -11,6 +11,13 @@ if deg is k and know k + 1 value
 f(x) = sum (i = 1, i <= k + 1) {f(x[i]) * mul (j = 1, j <= k + 1, j != i) {(x - x[j]) / (x[i] - x[j]}}
 
 -----------------------------
+Alian trick:
+
+opt[i - 1] <= opt[i];
+ans = dp[n] + C * condition (ex: ngroup
+- k == 0)
+binary_search C
+-----------------------------
 pi: EV cua buoc thu (i + 1)
 E = sum pi
 pi: (thieu c1) + (thieu c2) + ... + (thieu cn)
