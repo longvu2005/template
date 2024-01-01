@@ -1,3 +1,7 @@
+a * x + b * y = c
+x = (c * x0) / gcd + (b / gcd) * t
+y = (c * y0) / gcd - (a / gcd) * t
+
 pair<pair<int, int>, int> ext_Euclid(int a, int b) {
     if (!b) {
         return {{1, 0}, a};
