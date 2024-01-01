@@ -26,8 +26,14 @@ class Hungarian {
     vector<T> minv;
     vector<bool> used;
     T inf;
+    int is_swap = 0;
     Hungarian(int _n, int _m) : n(_n), m(_m) {
-        assert(n <= m);
+        if (m < n) {
+            swap(n, m);
+            is_swap = 1;
+        } else {
+            is_swap = 0;
+        }
         a = vector<vector<T>>(n, vector<T>(m));
         u = vector<T>(n + 1);
         v = vector<T>(m + 1);
@@ -40,7 +46,11 @@ class Hungarian {
     }
 
     void addEdge(int u, int v, long long c) {
-        a[u][v] = c;
+        if (is_swap) {
+            a[v][u] = c;
+        } else {
+            a[u][v] = c;
+        }
     }
 
     inline void add_row(int i) {
@@ -92,5 +102,22 @@ class Hungarian {
             add_row(i);
         }
         return current_score();
+    }
+    vector<pair<int, int>> trace() { // for trace matching
+        vector<pair<int, int>> res;
+        if (is_swap) {
+            for (int i = 0; i < sz(pb) - 1; ++i) {
+                if (pb[i] >= 0) {
+                    res.push_back({i, pb[i]});
+                }
+            }
+        } else {
+            for (int i = 0; i < sz(pa) - 1; ++i) {
+                if (pa[i] >= 0) {
+                    res.push_back({i, pa[i]});
+                }
+            }
+        }
+        return res;
     }
 };
