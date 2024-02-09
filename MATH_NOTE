@@ -93,4 +93,4 @@ f(m) = (1 - 2x^c1 + 3x^(2c1))((1 - 2x^c2 + 3x^(2c2))...(1 - 2x^cm + 3x^(2cm))
 
 ----------------------------
 
-$$\prod_{n \ge 1}(1 - x^{n}) = 1 + \displaystyle\sum_{i \ge 1}(-1)^{i}\left(x^{\frac{i(3i+1)}{2}} + x^{\frac{i(3i-1)}{2}}\right)$$
+$$= 1 + \displaystyle\sum_{i \ge 1}(-1)^{i}\left(x^{\frac{i(3i+1)}{2}} + x^{\frac{i(3i-1)}{2}}\right)$$
