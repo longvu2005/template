@@ -1,0 +1,25 @@
+const int mod[2] = {(int)(1e9 + 7), 1234567891};
+const int BASE = (int)(311);
+ 
+int pw[nax][2];
+void precal() {
+    pw[0][0] = pw[0][1] = 1;
+    for (int i = 1; i < nax; ++i) {
+        for (int j = 0; j <= 1; ++j) {
+            pw[i][j] = BASE * pw[i - 1][j] % mod[j];
+        }
+    }
+}
+ 
+void build(int h[][2], string s) {
+    for (int i = 1; i <= sz(s); ++i) {
+        for (int j = 0; j <= 1; ++j) {
+            h[i][j] = (BASE * h[i - 1][j] % mod[j] + s[i - 1]) % mod[j];
+        }
+    }
+}
+ 
+pair<int, int> get(int h[][2], int l, int r) {
+    return {(h[r][0] - h[l - 1][0] * pw[r - l + 1][0] % mod[0] + mod[0]) % mod[0]
+            , (h[r][1] - h[l - 1][1] * pw[r - l + 1][1] % mod[1] + mod[1]) % mod[1]};
+}
