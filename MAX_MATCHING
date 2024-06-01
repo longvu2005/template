@@ -1,0 +1,16 @@
+int matching[nax], t = 0, vis[nax];
+vector<int> adj[nax];
+int dfs(int u) {
+    if (vis[u] == t) {
+        return false;
+    } else {
+        vis[u] = t;
+    }
+    for (auto v : adj[u]) {
+        if (!matching[v] || dfs(matching[v])) {
+            matching[v] = u;
+            return true;
+        }
+    }
+    return false;
+}
