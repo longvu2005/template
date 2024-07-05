@@ -1,0 +1,22 @@
+vector<int> max_conv_concave(vector<int> &a, vector<int> &b) {
+    if (b.empty()) {
+        return a;
+    }
+    if (a.empty()) {
+        return b;
+    }
+    vector<int> slope;
+    for (int i = 1; i < sz(a); ++i) {
+        slope.push_back(a[i] - a[i - 1]);
+    }
+    for (int i = 1; i < sz(b); ++i) {
+        slope.push_back(b[i] - b[i - 1]);
+    }
+    sort(all(slope), greater<int>());
+    vector<int> res = {a[0] + b[0]};
+    for (int i = 1; i <= sz(a) + sz(b) - 2; ++i) {
+        res.push_back(slope[i - 1] + res.back());
+    }
+    assert(sz(res) == sz(a) + sz(b) - 1);
+    return res;
+}
