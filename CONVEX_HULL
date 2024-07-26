@@ -1,12 +1,12 @@
 struct Line {
-    int a, b;
+    ld a, b;
 
-    Line(int _a, int _b) {
+    Line(ld _a, ld _b) {
         a = _a;
         b = _b;
     }
 
-    int cal(int x) {
+    ld cal(ld x) {
         return a * x + b;
     }
 
@@ -39,25 +39,32 @@ struct Convex_hull {
         a.push_back(z);
     }
 
-    vector<Line> dq;
+    vector<Line> dq, dqp;
     void precal() {
         sort(1 + all(a));
         for (int i = 1; i < sz(a); ++i) {
-            while (sz(dq) >= 2 && find_ins(dq.back(), a[i]) < find_ins(dq[sz(dq) - 2], dq.back())) {
+            while (sz(dq) >= 2 && find_ins(dq.back(), a[i]) <= find_ins(dq[sz(dq) - 2], dq.back())) {
                 dq.pop_back();
             }
             dq.push_back(a[i]);
         }
+        for (int i = 1; i < sz(a); ++i) {
+            while (sz(dqp) >= 2 && find_ins(dqp.back(), a[i]) >= find_ins(dqp[sz(dqp) - 2], dqp.back())) {
+                dqp.pop_back();
+            }
+            dqp.push_back(a[i]);
+        }
     }
 
-    int get(int x) {
+    ld get_mx(ld x) {
         if (dq.empty()) {
             return 0;
         }
-        int res = dq[0].cal(x);
+        ld res = dq[0].cal(x);
         int l = 1, r = sz(dq) - 1;
         while (l <= r) {
-            int mid = (l + r) >> 1, z = dq[mid - 1].cal(x), t = dq[mid].cal(x);
+            int mid = (l + r) >> 1;
+            ld z = dq[mid - 1].cal(x), t = dq[mid].cal(x);
             maximize(res, z);
             maximize(res, t);
             if (z <= t) {
@@ -68,6 +75,28 @@ struct Convex_hull {
         }
         l--;
         maximize(res, dq[l].cal(x));
+        return res;
+    }
+
+    ld get_mn(ld x) {
+        if (dqp.empty()) {
+            return 0;
+        }
+        ld res = dqp[0].cal(x);
+        int l = 1, r = sz(dqp) - 1;
+        while (l <= r) {
+            int mid = (l + r) >> 1;
+            ld z = dqp[mid - 1].cal(x), t = dqp[mid].cal(x);
+            minimize(res, z);
+            minimize(res, t);
+            if (z >= t) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        l--;
+        minimize(res, dqp[l].cal(x));
         return res;
     }
 };
