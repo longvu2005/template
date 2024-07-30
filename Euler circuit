@@ -1,0 +1,12 @@
+        vector<int> ans;
+        function<void(int)> dfsp = [&](int u) {
+            for (auto lab : adj[u]) {
+                if (dp[lab]) {
+                    continue;
+                }
+                dp[lab] = 1;
+                int v = other(lab, u);
+                dfsp(v);
+            }
+            ans.push_back(u);
+        };
