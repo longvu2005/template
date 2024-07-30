@@ -1,16 +1,16 @@
-        vector<int> ans;
         function<void(int)> dfsp = [&](int u) {
             for (int i = 0; i < sz(adj[u]); ++i) {
                 int lab = adj[u][i];
+                swap(adj[u][i], adj[u].back());
+                adj[u].pop_back();
+                i--;
                 if (dp[lab]) {
                     continue;
                 }
                 dp[lab] = 1;
                 int v = other(lab, u);
-                swap(adj[u][i], adj[u].back());
-                adj[u].pop_back();
-                i--;
                 dfsp(v);
             }
             ans.push_back(u);
         };
+        dfsp(1);
