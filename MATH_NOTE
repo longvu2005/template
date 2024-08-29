@@ -10,6 +10,26 @@ if deg is k and know k + 1 value
 
 f(x) = sum (i = 1, i <= k + 1) {f(x[i]) * mul (j = 1, j <= k + 1, j != i) {(x - x[j]) / (x[i] - x[j]}}
 
+Ex: 1^k + 2^k + 3^k + ... x^k
+        for (int i = 1; i <= k + 2; ++i) {
+            y[i] = (mint(i) ^ k) + y[i - 1];
+        }
+        auto cal = [&](int x) {
+            mint res = 0;
+            int deg = k + 1;
+            for (int i = 1; i <= deg + 1; ++i) {
+                mint mul = 1;
+                for (int j = 1; j <= deg + 1; ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    mul *= mint(x - j) / mint(i - j);
+                }
+                res += y[i] * mul;
+            }
+            return res;
+        };
+
 -----------------------------
 Alian trick:
 
