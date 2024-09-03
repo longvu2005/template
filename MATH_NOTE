@@ -145,3 +145,13 @@ Tìm min / max f(x, y), g(x, y) = 0.
 L(x, y, ..., delta) = f(x, y, ...) + delta * g(x, y, ...).
 Đạo hàm theo các biến => tìm delta => tìm lại đc x, y, .... => tìm đc cực trị.
 
+----------------------------
+
+Check 2 tree are isomorphic
+
+Compare 2 hash of each tree.
+
+Fomular caculate hash:
+
+hs(u) = value[subsz[u]] + sum all childs hs[v] * hs[v].
+
