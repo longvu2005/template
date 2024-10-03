@@ -28,10 +28,11 @@ ld find_ins(Line a, Line b) {
 
 struct Convex_hull {
     vector<Line> a;
-
+    vector<Line> dq, dqp;
     void reseter() {
         a.clear();
         dq.clear();
+        dqp.clear();
         a.push_back({ -1, -1});
     }
 
@@ -39,7 +40,6 @@ struct Convex_hull {
         a.push_back(z);
     }
 
-    vector<Line> dq, dqp;
     void precal() {
         sort(1 + all(a));
         for (int i = 1; i < sz(a); ++i) {
