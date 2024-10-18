@@ -160,12 +160,12 @@ hs(u) = value[subsz[u]] + sum all childs hs[v] * hs[v].
 Gray code:
 - 2 consecutive masks have different exactly 1 bit.
 
-for (int i = 0; i < (1 << n); ++i) {
-bitset<17> bs = (i ^ (i >> 1));
-for (int j = 0; j < n; ++j) {
-    cout << bs[j];
-}
-cout << '\n';
-}
+	for (int i = 0; i < (1 << n); ++i) {
+	    bitset<17> bs = (i ^ (i >> 1));
+	    for (int j = 0; j < n; ++j) {
+	        cout << bs[j];
+	    }
+	    cout << '\n';
+	}
 
 
