@@ -1,0 +1,96 @@
+int n, k;
+int vis[nax], subsz[nax];
+vector<int> adj[nax];
+int dfs(int u, int pa) {
+    subsz[u] = 1;
+    for (auto v : adj[u]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        dfs(v, u);
+        subsz[u] += subsz[v];
+    }
+    return subsz[u];
+}
+
+int find_ct(int u, int pa, int np) {
+    for (auto v : adj[u]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        if (subsz[v] > np / 2) {
+            return find_ct(v, u, np);
+        }
+    }
+    return u;
+}
+
+int cnt[nax], ans = 0;
+void dfstoupdate(int u, int pa, int dist) {
+    cnt[dist]++;
+    for (auto v : adj[u]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        dfstoupdate(v, u, dist + 1);
+    }
+}
+
+void dfstoget(int u, int pa, int dist) {
+    if (k - dist >= 0) {
+        ans += cnt[k - dist];
+    } else {
+        return;
+    }
+    for (auto v : adj[u]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        dfstoget(v, u, dist + 1);
+    }
+}
+
+void dfstoreset(int u, int pa, int dist) {
+    cnt[dist] = 0;
+    for (auto v : adj[u]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        dfstoreset(v, u, dist + 1);
+    }
+}
+
+void build(int u, int pa) {
+    int np = dfs(u, pa), ct = find_ct(u, pa, np);
+    vis[ct] = 1;
+    cnt[0] = 1;
+    for (auto v : adj[ct]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        dfstoget(v, ct, 1);
+        dfstoupdate(v, ct, 1);
+    }
+    dfstoreset(ct, -1, 0);
+    for (auto v : adj[ct]) {
+        if (v == pa || vis[v]) {
+            continue;
+        }
+        build(v, ct);
+    }
+}
+
+int32_t main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> k;
+    for (int i = 1; i < n; ++i) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    build(1, -1);
+    cout << ans << '\n';
+    return 0;
+}
