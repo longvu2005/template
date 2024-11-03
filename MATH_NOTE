@@ -163,9 +163,17 @@ Gray code:
 	for (int i = 0; i < (1 << n); ++i) {
 	    bitset<17> bs = (i ^ (i >> 1));
 	    for (int j = 0; j < n; ++j) {
-	        cout << bs[j];
+		cout << bs[j];
 	    }
 	    cout << '\n';
 	}
 
+----------------------------
 
+Mobius:
+	mobius[1] = 1;
+	for (int i = 1; i < nax; ++i) {
+		for (int j = 2 * i; j < nax; j += i) {
+		    mobius[j] -= mobius[i];
+		}
+	}
