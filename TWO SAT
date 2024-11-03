@@ -1,53 +1,24 @@
-#include<bits/stdc++.h>
- 
-using namespace std;
- 
-#define int long long
-#define sz(x) ((int)x.size())
-#define all(x) (x).begin(), (x).end()
-const int INF = numeric_limits<int>::max();
-const int nax = (int)(201001);
-const int mod = 1e9 + 7;
- 
-template<class X, class Y>
-bool maximize(X& x, const Y y) {
-    if (y > x) {x = y; return true;}
-    return false;
-}
-template<class X, class Y>
-bool minimize(X& x, const Y y) {
-    if (y < x) {x = y; return true;}
-    return false;
-}
- 
-int n, m;
-int convert(char c, int x) {
-    return x + (c == '+' ? 0 : n);
-}
- 
-char nt(char c) {
-    return (c == '+' ? '-' : '+');
-}
- 
-#define Fi first
-#define Se second
- 
-int low[nax], num[nax], ncomp = 0, compID[nax], dp[nax];
-vector<int> adj[nax], adjp[nax];
-int32_t main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cin >> m >> n;
-    for (int i = 1; i <= m; ++i) {
-        char a, b;
-        int  c, d;
-        cin >> a >> c >> b >> d;
-        adj[convert(nt(a), c)].push_back(convert(b, d));
-        adj[convert(nt(b), d)].push_back(convert(a, c));
-    }
+struct Twosat {
+    int n, low[nax], num[nax], ncomp = 0, compID[nax], dp[nax];
+    vector<int> adj[nax], adjp[nax];
     vector<int> st;
     int t = 0;
-    function<void(int)> dfs = [&](int u) {
+    void reserer(int _n) {
+        n = _n;
+        t = 0;
+        ncomp = 0;
+        st.clear();
+        for (int i = 1; i <= 2 * n; ++i) {
+            adj[i].clear(); adjp[i].clear();
+            low[i] = num[i] = compID[i] = dp[i] = 0;
+        }
+    }
+
+    void add(int u, int v) { // if u then v
+        adj[u].push_back(v);
+    }
+
+    void dfs(int u) {
         num[u] = low[u] = ++t;
         st.push_back(u);
         for (auto v : adj[u]) {
@@ -69,57 +40,52 @@ int32_t main() {
             num[u] = low[u] = INF;
             st.pop_back();
         }
-    };
-    // for (int i = 1; i <= 2 * n; ++i) {
-    //     for (auto v : adj[i]) {
-    //         cout << i << " " << v << '\n';
-    //     }
-    // }
-    for (int i = 1; i <= 2 * n; ++i) {
-        if (!num[i]) {
-            dfs(i);
-        }
     }
-    // for (int i = 1; i <= 2 * n; ++i) {
-    //     cout << compID[i] << " ";
-    // }
-    // cout << '\n';
-    memset(num, 0, sizeof num);
-    for (int u = 1; u <= 2 * n; ++u) {
-        for (auto v : adj[u]) {
-            if (compID[u] != compID[v]) {
-                adjp[compID[u]].push_back(compID[v]);
+
+    vector<int> solve() {
+        for (int i = 1; i <= 2 * n; ++i) {
+            if (!num[i]) {
+                dfs(i);
             }
         }
-    }
-    vector<int> topo;
-    function<void(int)> dfsp = [&](int u) {
-        num[u] = 1;
-        for (auto v : adjp[u]) {
-            if (!num[v]) {
-                dfs(v);
+        for (int i = 1; i <= 2 * n; ++i) {
+            num[i] = 0;
+        }
+        for (int u = 1; u <= 2 * n; ++u) {
+            for (auto v : adj[u]) {
+                if (compID[u] != compID[v]) {
+                    adjp[compID[u]].push_back(compID[v]);
+                }
             }
         }
-        topo.push_back(u);
-    };
-    for (int i = 1; i <= ncomp; ++i) {
-        if (!num[i]) {
-            dfsp(i);
+        vector<int> topo;
+        function<void(int)> dfsp = [&](int u) {
+            num[u] = 1;
+            for (auto v : adjp[u]) {
+                if (!num[v]) {
+                    dfs(v);
+                }
+            }
+            topo.push_back(u);
+        };
+        for (int i = 1; i <= ncomp; ++i) {
+            if (!num[i]) {
+                dfsp(i);
+            }
         }
-    }
-    t = 0;
-    for (auto u : topo) {
-        dp[u] = ++t;
-    }
-    for (int i = 1; i <= n; ++i) {
-        if (dp[compID[i]] == dp[compID[n + i]]) {
-            cout << "IMPOSSIBLE" << '\n';
-            exit(0);
+        t = 0;
+        for (auto u : topo) {
+            dp[u] = ++t;
         }
+        for (int i = 1; i <= n; ++i) {
+            if (dp[compID[i]] == dp[compID[n + i]]) {
+                return vector<int>({ -1});
+            }
+        }
+        vector<int> res(n + 1, 0);
+        for (int i = 1; i <= n; ++i) {
+            res[i] = (dp[compID[i + n]] < dp[compID[i]] ? 0 : 1);
+        }
+        return res;
     }
-    for (int i = 1; i <= n; ++i) {
-        cout << (dp[compID[i + n]] < dp[compID[i]] ? '-' : '+') << " ";
-    }
-    cout << '\n';
-    return 0;
-}
+};
