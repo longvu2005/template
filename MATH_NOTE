@@ -1,3 +1,5 @@
+Pick theory
+
 S = B / 2 + I - 1
 
 -----------------------------
@@ -176,4 +178,30 @@ Mobius:
 		for (int j = 2 * i; j < nax; j += i) {
 		    mobius[j] -= mobius[i];
 		}
+	}
+
+----------------------------
+Intersertion of 2 line:
+	pair<int, int> cal(int a, int b, int c, int ap, int bp, int cp) {
+	    int x = bp * c - b * cp, y = a * bp - ap * b;
+	    if (!y || x % y) {
+	        return {INF, INF};
+	    }
+	    if (b) {
+	        int t = (c - a * x / y);
+	        if (t % b) {
+	            return {INF, INF};
+	        }
+	        return {x / y, t / b};
+	    }
+	    else {
+	        if (!bp) {
+	            return {INF, INF};
+	        }
+	        int t = (cp - ap * x / y);
+	        if (t % bp) {
+	            return {INF, INF};
+	        }
+	        return {x / y, t / bp};
+	    }
 	}
