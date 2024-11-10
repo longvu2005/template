@@ -1,0 +1,124 @@
+struct Point {
+    ld x, y;
+    friend istream& operator>>(istream &in, Point &z) {
+        int x, y;
+        cin >> x >> y;
+        z.x = x; z.y = y;
+        return in;
+    }
+};
+
+using Vtor = Point;
+
+Point operator + (Point a, ld b) {
+    return {a.x + b, a.y + b};
+}
+
+Point operator + (Point a, Point b) {
+    return {a.x + b.x, a.y + b.y};
+}
+
+Point operator - (Point a, ld b) {
+    return {a.x - b, a.y - b};
+}
+
+Point operator - (Point a, Point b) {
+    return {a.x - b.x, a.y - b.y};
+}
+
+Point operator * (Point a, ld b) {
+    return {a.x * b, a.y * b};
+}
+
+Vtor make_vtor(Point a, Point b) {
+    return b - a;
+}
+
+ld dot(Vtor a, Vtor b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+ld cross(Vtor a, Vtor b) {
+    return a.x * b.y - a.y * b.x;
+}
+
+
+const ld eps = (ld)(1e-9);
+
+struct Half_plane {
+    Point p;
+    Vtor pq;
+    ld angle;
+
+    Half_plane() {}
+
+    Half_plane(Point a, Point b) : p(a), pq(make_vtor(a, b)) {
+        angle = atan2l(pq.x, pq.y);
+    }
+
+    bool operator < (const Half_plane& z) const {
+        return angle < z.angle;
+    }
+
+    bool out(Point z) {
+        return cross(pq, z - p) < -eps;
+    }
+};
+
+Point inter(Half_plane a, Half_plane b) {
+    ld alpha = cross(b.p - a.p, b.pq) / cross(a.pq, b.pq);
+    return a.p + a.pq * alpha;
+}
+
+vector<Point> hp_inter(Half_plane a[], int n) {
+    const int inf = (int)(1e9) + 21;
+    vector<Point> tmp = {{ -inf, -inf}
+        , {inf, -inf}
+        , {inf, inf}
+        , { -inf, inf}
+    };
+    for (int i = 0; i < sz(tmp); ++i) {
+        a[++n] = Half_plane(tmp[i], tmp[(i + 1) % 4]);
+    }
+    sort(a + 1, a + n + 1);
+    deque<Half_plane> dq;
+    for (int i = 1; i <= n; ++i) {
+        // cout << "BUG: " << a[i].p.x << " " << a[i].p.y << '\n';
+        while (sz(dq) >= 2 && a[i].out(inter(dq[sz(dq) -  2], dq.back()))) {
+            dq.pop_back();
+        }
+        while (sz(dq) >= 2 && a[i].out(inter(dq[0], dq[1]))) {
+            dq.pop_front();
+        }
+        if (sz(dq) > 0 && abs(cross(dq.back().pq, a[i].pq)) <= eps) {
+            if (abs(dot(dq.back().pq, a[i].pq) + 1.0) <= eps) {
+                return vector<Point>();
+            }
+            if (a[i].out(dq.back().p)) {
+                dq.pop_back();
+            } else {
+                // cout << "BU" << '\n';
+                continue;
+            }
+        }
+        dq.push_back(a[i]);
+        // for (auto z : dq) {
+        //     cout << z.p.x << " " << z.p.y << " " << z.pq.x << " " << z.pq.y << '\n';
+        // }
+        // cout << '\n';
+    }
+    while (sz(dq) >= 1 && dq.front().out(inter(dq[sz(dq) -  2], dq.back()))) {
+        dq.pop_back();
+    }
+    while (sz(dq) >= 2 && dq.back().out(inter(dq[0], dq[1]))) {
+        dq.pop_front();
+    }
+    vector<Point> res;
+    if (sz(dq) <= 2) {
+        return res;
+    }
+    for (int i = 0; i < sz(dq); ++i) {
+        res.push_back(inter(dq[i], dq[(i + 1) % sz(dq)]));
+    }
+    return res;
+}
